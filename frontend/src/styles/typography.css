@@ -1,0 +1,163 @@
+/* ============================================================
+   EVENTSPHERE — TYPOGRAPHY SYSTEM
+   One consistent type system for the whole app (public + dashboard).
+     • Hero headings ............ Poppins · bold (700)
+     • Page / section headings .. Poppins · semibold (600)
+     • Body, forms, buttons ..... Plus Jakarta Sans
+     • Numbers & analytics ...... Plus Jakarta Sans · tabular
+   Loaded LAST so it wins on source order without touching colors,
+   layout, Tailwind or the Vite setup. No !important is used for
+   font-family so Font Awesome glyphs inside headings keep working.
+   ============================================================ */
+
+:root {
+  --font-body: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-display: 'Poppins', 'Space Grotesk', 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Type scale — clear hierarchy */
+  --fs-hero: clamp(2.4rem, 4.6vw, 3.5rem);
+  --fs-page: clamp(1.6rem, 2.4vw, 2.15rem);
+  --fs-section: clamp(1.2rem, 1.7vw, 1.5rem);
+  --fs-body: 0.95rem;
+  --fs-small: 0.82rem;
+  --fs-label: 0.72rem;
+}
+
+/* ---------- Base: body / forms / buttons = Inter ---------- */
+/* :root is included so the base Manrope declaration (also :root) is
+   overridden by source order — same specificity, loaded last. */
+:root,
+html,
+body {
+  font-family: var(--font-body);
+}
+body {
+  font-size: var(--fs-body);
+  line-height: 1.6;
+}
+button,
+input,
+select,
+textarea,
+kbd,
+samp,
+code,
+.kbd {
+  font-family: var(--font-body);
+}
+
+/* ---------- Headings = Space Grotesk (semibold baseline) ---------- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+/* ---------- Hero headings = Space Grotesk bold ---------- */
+.neo-hero-copy h1,
+.hero-copy h1,
+.es-hero h1,
+.dash-hero h1,
+.ai-hero h1,
+.profile-banner h1,
+.role-experience-banner h1,
+.notfound-card h1,
+.auth-showcase h1,
+.enterprise-hero h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+/* Base rule forces 750!important here, so match it to land on bold */
+.hero-copy h1 {
+  font-weight: 700 !important;
+}
+
+/* ---------- Page / section headings = Space Grotesk semibold ---------- */
+.page-title h1,
+.panel h2,
+.panel-head h2,
+.public-section h2,
+.es-section h2,
+.neo-section-heading h2,
+.neo-final h2,
+.neo-showcase-copy h2,
+.neo-count-info h2,
+.live-event-banner h2,
+.quick-actions h2,
+.intelligence-summary h2,
+.auth-card-head h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+/* ---------- Sizes: hierarchy for headings that had no size of their own ---------- */
+.page-title h1 { font-size: var(--fs-page); line-height: 1.14; }
+.panel h2,
+.panel-head h2 { font-size: var(--fs-section); line-height: 1.25; }
+
+/* ---------- Wordmarks / marks = Poppins ---------- */
+.brand,
+.brand-mark,
+.side-brand b,
+.neo-logo,
+.neo-globe-core,
+.live-command-title {
+  font-family: var(--font-display);
+}
+
+/* ---------- Labels, kickers, supporting text = Inter ---------- */
+.kicker,
+.section-kicker,
+.neo-section-kicker,
+.neo-count-tag,
+.ai-summary-line,
+.role-experience-badge,
+small,
+.brand small,
+.side-brand small,
+.neo-logo small {
+  font-family: var(--font-body);
+}
+
+/* ---------- Numbers & analytics = Inter + tabular (even spacing) ---------- */
+.stats,
+.stat b,
+.health-grid,
+.health-value,
+.event-date,
+.event-date b,
+.proof b,
+.experience-metric b,
+.live-clock,
+.live-stats b,
+.auth-stats b,
+.neo-price-value,
+.neo-count-cell b,
+.neo-agenda-time,
+.leader-row > strong,
+.trend-col b,
+.table-panel,
+.table-panel b,
+.ticket-row strong,
+.profile-details b,
+.profile-stat b,
+.pass-card h2,
+.hero-meta-chip b,
+.hero-float b,
+.enterprise-stats .stat b,
+[data-num],
+.num,
+time {
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: 'tnum' 1, 'lnum' 1;
+}
+
+input[type='number'],
+input[type='date'],
+input[type='time'],
+input[type='datetime-local'],
+input[type='month'],
+input[type='week'] {
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums lining-nums;
+}

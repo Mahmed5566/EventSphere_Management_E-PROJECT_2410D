@@ -1,0 +1,343 @@
+/* ============================================================================
+   EventSphere — VIP Header & Search Motion
+   ----------------------------------------------------------------------------
+   Additive motion layer for the dashboard header after login:
+     • Workspace Search button  ...... attention shimmer + hover glow
+     • Theme toggle (dark/light) ..... icon spin + pulse ring
+     • Notification bell ............. swing + badge pulse (+ rings when unread)
+     • My Profile (account menu) ..... avatar shine, orbiting accent, item slide
+     • Command palette (VIP search) .. cinematic open, animated results + pics
+     • Pictures ...................... Ken-Burns drift + light sweep on hover
+   Role-aware accents are driven by .app-shell[data-role="…"], so admin /
+   organizer / staff / exhibitor / attendee each get their own color signature.
+   All motion is neutralised under prefers-reduced-motion.
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   0. Role accent tokens
+   --------------------------------------------------------------------------- */
+.app-shell{
+  --hd-accent:#55e6ff;
+  --hd-accent-2:#2f7dff;
+  --hd-glow:rgba(47,128,255,.30);
+}
+.app-shell[data-role="admin"]{ --hd-accent:#ffd76a; --hd-accent-2:#ff9f43; --hd-glow:rgba(255,183,74,.30); }
+.app-shell[data-role="organizer"]{ --hd-accent:#5ce1ff; --hd-accent-2:#2f7dff; --hd-glow:rgba(47,128,255,.30); }
+.app-shell[data-role="staff"]{ --hd-accent:#b6a4ff; --hd-accent-2:#7c6bff; --hd-glow:rgba(139,124,255,.30); }
+.app-shell[data-role="exhibitor"]{ --hd-accent:#5de1c2; --hd-accent-2:#22b58f; --hd-glow:rgba(93,225,194,.28); }
+.app-shell[data-role="attendee"]{ --hd-accent:#ff9ec2; --hd-accent-2:#ff5f9e; --hd-glow:rgba(255,120,170,.28); }
+
+/* ---------------------------------------------------------------------------
+   1. Header ambience — sweeping accent underline
+   --------------------------------------------------------------------------- */
+.dash-header{ position:relative; }
+.dash-header::after{
+  content:'';
+  position:absolute; left:0; right:0; bottom:-1px; height:2px;
+  pointer-events:none; opacity:.55;
+  background:linear-gradient(90deg,transparent 5%,var(--hd-accent),var(--hd-accent-2),transparent 95%);
+  background-size:220% 100%;
+  animation:hdSweep 7s linear infinite;
+}
+
+/* ---------------------------------------------------------------------------
+   2. Tool cluster — staggered entrance once the workspace mounts
+   --------------------------------------------------------------------------- */
+.header-tools > *{ animation:hdToolIn .5s cubic-bezier(.18,.82,.22,1) both; }
+.header-tools > *:nth-child(1){ animation-delay:.06s; }
+.header-tools > *:nth-child(2){ animation-delay:.12s; }
+.header-tools > *:nth-child(3){ animation-delay:.18s; }
+.header-tools > *:nth-child(4){ animation-delay:.24s; }
+.header-tools > *:nth-child(5){ animation-delay:.30s; }
+.app-shell .header-page-icon{
+  animation:hdGlowPulse 3.4s ease-in-out infinite;
+  color:var(--hd-accent);
+  border-color:color-mix(in srgb,var(--hd-accent) 40%,transparent);
+  background:color-mix(in srgb,var(--hd-accent) 12%,transparent);
+}
+
+/* ---------------------------------------------------------------------------
+   2. Workspace search button
+   --------------------------------------------------------------------------- */
+.workspace-search{ position:relative; overflow:hidden; isolation:isolate; }
+.workspace-search::after{                     /* diagonal light sweep */
+  content:'';
+  position:absolute; top:-60%; bottom:-60%; left:-40%; width:36%;
+  pointer-events:none; opacity:0;
+  transform:translateX(-220%) rotate(18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.42),transparent);
+  transition:opacity .3s ease;
+}
+.workspace-search:hover{
+  border-color:var(--hd-accent) !important;
+  color:#eaf7ff;
+  box-shadow:0 0 0 1px var(--hd-glow),0 12px 30px var(--hd-glow);
+}
+.workspace-search:hover::after{ opacity:1; animation:hdShine .9s var(--pf-ease) both; }
+.workspace-search i{ transition:transform .35s var(--pf-ease-soft),color .25s ease; }
+.workspace-search:hover i{ transform:scale(1.18) rotate(-8deg); color:var(--hd-accent); }
+.workspace-search kbd{ transition:border-color .25s ease,color .25s ease,background .25s ease; }
+.workspace-search:hover kbd{ border-color:var(--hd-accent); color:#fff; }
+/* gentle periodic glow so users notice the VIP search (own layer, so it
+   never fights the button's entrance animation) */
+.workspace-search::before{
+  content:''; position:absolute; inset:0; border-radius:inherit;
+  pointer-events:none; box-shadow:none;
+}
+@media (prefers-reduced-motion: no-preference){
+  .workspace-search::before{ animation:hdNudge 9s ease-in-out infinite; }
+}
+.workspace-search:focus-visible::before{ animation:none; }
+
+/* ---------------------------------------------------------------------------
+   2b. Theme toggle — icon spin + pulse ring
+   --------------------------------------------------------------------------- */
+.theme-toggle{ position:relative; }
+.theme-toggle i{ display:inline-block; transition:transform .55s var(--pf-ease-soft),color .25s ease; }
+.theme-toggle:hover{ border-color:var(--hd-accent) !important; box-shadow:0 0 0 1px var(--hd-glow),0 10px 26px var(--hd-glow); }
+.theme-toggle:hover i{ transform:rotate(160deg) scale(1.12); color:var(--hd-accent); }
+.theme-toggle:active i{ transform:rotate(360deg) scale(.9); }
+.theme-toggle::after{
+  content:''; position:absolute; inset:-3px; border-radius:inherit;
+  border:1px solid var(--hd-accent); opacity:0; pointer-events:none;
+}
+.theme-toggle:hover::after{ animation:hdPing .8s ease-out; }
+
+/* ---------------------------------------------------------------------------
+   2c. Notification bell — swing + badge pulse (+ rings when unread)
+   --------------------------------------------------------------------------- */
+.notif-btn{ position:relative; }
+.notif-btn i{ display:inline-block; transform-origin:top center; transition:transform .3s ease,color .25s ease; }
+.notif-btn:hover{ border-color:var(--hd-accent) !important; box-shadow:0 0 0 1px var(--hd-glow),0 10px 26px var(--hd-glow); }
+.notif-btn:hover i{ animation:hdBell 1.05s ease-in-out infinite; color:var(--hd-accent); }
+/* rings on its own while unread notifications exist (pure CSS, no JS) */
+.notif-btn:has(b) i{ animation:hdBellSlow 5.5s ease-in-out infinite; }
+.notif-btn:has(b)::after{
+  content:''; position:absolute; inset:-3px; border-radius:inherit;
+  border:1px solid var(--hd-accent); opacity:0; pointer-events:none;
+  animation:hdPing 2.6s ease-out infinite;
+}
+.notif-btn b{
+  animation:hdBadge 1.9s ease-in-out infinite;
+  box-shadow:0 0 0 0 var(--hd-accent);
+}
+
+/* ---------------------------------------------------------------------------
+   2d. My Profile (account menu) — avatar shine + accent, item slide
+   --------------------------------------------------------------------------- */
+.hpm-trigger{ position:relative; }
+.hpm-avatar{ position:relative; }
+.hpm-avatar img{ transition:transform .6s var(--pf-ease),filter .45s ease; }
+.hpm-trigger:hover .hpm-avatar img,
+.hpm-trigger.open .hpm-avatar img{ transform:scale(1.12) rotate(2deg); filter:saturate(1.1); }
+/* light sweep across the avatar picture (the "pic" animation) */
+.hpm-avatar::after{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);
+  transform:translateX(-140%); opacity:0;
+}
+.hpm-trigger:hover .hpm-avatar::after,
+.hpm-trigger.open .hpm-avatar::after{ opacity:1; animation:hdShine .9s var(--pf-ease) both; }
+.hpm-trigger:hover{ box-shadow:0 0 0 1px var(--hd-glow),0 10px 30px var(--hd-glow); }
+.hpm-trigger.open{ box-shadow:0 0 0 4px var(--hd-glow),0 10px 30px var(--hd-glow); }
+/* orbiting accent pulse around the trigger */
+.hpm-trigger::after{
+  content:''; position:absolute; inset:-3px; border-radius:999px;
+  border:1px solid var(--hd-accent); opacity:0; pointer-events:none;
+}
+.hpm-trigger:hover::after{ animation:hdPing .9s ease-out; }
+.hpm-caret{ transition:transform .35s var(--pf-ease),color .25s ease; }
+.hpm-trigger:hover .hpm-caret{ color:var(--hd-accent); }
+.hpm-avatar{ box-shadow:0 0 0 2px var(--hd-accent); }
+.hpm-item i{ transition:transform .3s var(--pf-ease-soft),color .22s ease; }
+.hpm-item:hover i{ transform:scale(1.18); color:var(--hd-accent); }
+.hpm-item:hover{ transform:translateX(4px); }
+.hpm-role{ color:var(--hd-accent); border-color:var(--hd-glow); }
+
+/* ---------------------------------------------------------------------------
+   2e. Live pill pulse
+   --------------------------------------------------------------------------- */
+.live-pill i{ background:var(--hd-accent); box-shadow:0 0 14px var(--hd-accent); }
+
+/* ---------------------------------------------------------------------------
+   3. VIP search — command palette (cinematic open + animated results & pics)
+   --------------------------------------------------------------------------- */
+.command-overlay{
+  background:
+    radial-gradient(circle at 50% 12%,var(--hd-glow),transparent 58%),
+    rgba(0,0,0,.64);
+  animation:hdFade .24s ease both;
+  backdrop-filter:blur(9px);
+  -webkit-backdrop-filter:blur(9px);
+}
+.command-card{ position:relative; overflow:hidden; border-color:var(--hd-glow); }
+.command-card::before{
+  content:''; position:absolute; top:0; left:0; right:0; height:2px; z-index:2;
+  background:linear-gradient(90deg,transparent,var(--hd-accent),var(--hd-accent-2),transparent);
+  background-size:220% 100%;
+  animation:hdSweep 4.5s linear infinite;
+}
+.command-search{ position:relative; }
+.command-search > i{ color:var(--hd-accent); animation:hdSearchPulse 2.6s ease-in-out infinite; }
+.command-search input{ caret-color:var(--hd-accent); transition:color .2s ease; }
+.command-search input::placeholder{ transition:color .2s ease; }
+.command-search:focus-within input::placeholder{ color:rgba(150,190,225,.75); }
+
+/* ---- results list shell -------------------------------------------------- */
+.command-results{
+  display:flex; flex-direction:column; gap:3px; padding:10px;
+  scrollbar-width:thin;
+  scrollbar-color:color-mix(in srgb,var(--hd-accent) 60%,transparent) transparent;
+}
+.command-results::-webkit-scrollbar{ width:8px; }
+.command-results::-webkit-scrollbar-track{ background:transparent; }
+.command-results::-webkit-scrollbar-thumb{
+  border-radius:99px; border:2px solid transparent; background-clip:content-box;
+  background:color-mix(in srgb,var(--hd-accent) 60%,transparent);
+}
+
+/* ---- group label --------------------------------------------------------- */
+.command-group{
+  display:flex; align-items:center; gap:10px; margin:9px 6px 4px;
+  font-size:9.5px; font-weight:800; letter-spacing:.15em; text-transform:uppercase;
+  color:#8299b6;
+}
+.command-group:first-child{ margin-top:2px; }
+.command-group::after{
+  content:''; flex:1 1 auto; height:1px;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--hd-accent) 42%,transparent),transparent);
+}
+
+/* ---- rows ---------------------------------------------------------------- */
+.command-results button.command-row{
+  gap:12px; padding:10px 12px; border-radius:13px; border:1px solid transparent;
+  transition:background .22s ease,border-color .22s ease,transform .25s var(--pf-ease),box-shadow .25s ease;
+}
+.command-results button.command-row:hover{
+  transform:translateX(3px);
+  border-color:color-mix(in srgb,var(--hd-accent) 26%,transparent);
+}
+.command-results button.command-row.active{
+  background:linear-gradient(90deg,var(--hd-glow),rgba(78,163,255,.03)) !important;
+  border-color:color-mix(in srgb,var(--hd-accent) 45%,transparent);
+  box-shadow:0 10px 26px var(--hd-glow);
+  transform:translateX(3px);
+}
+.command-results button.command-row::after{
+  background:linear-gradient(180deg,var(--hd-accent),var(--hd-accent-2)) !important;
+}
+
+/* ---- row text ------------------------------------------------------------ */
+.command-results .command-text{
+  display:flex; flex-direction:column; align-items:flex-start; gap:2px;
+  min-width:0; flex:1 1 auto;
+}
+.command-results .command-text b{
+  max-width:100%; font-size:12.5px; font-weight:700; color:#dbe7f6;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  transition:color .2s ease;
+}
+.command-results button:hover .command-text b,
+.command-results button.active .command-text b{ color:#fff; }
+.command-results .command-hint{
+  margin:0; max-width:100%; font-size:10.5px; font-weight:500; color:#8aa3c0;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.command-results button.active .command-hint{ color:#a9c2db; }
+.command-results .command-go{
+  flex:none; font-size:11px; color:var(--hd-accent); opacity:0;
+  transform:translateX(-6px);
+  transition:opacity .22s ease,transform .25s var(--pf-ease);
+}
+.command-results button:hover .command-go,
+.command-results button.active .command-go{ opacity:1; transform:none; }
+
+/* ---- thumbnails & icons -------------------------------------------------- */
+.command-thumb-wrap{ position:relative; overflow:hidden; }
+.command-results .command-thumb-wrap{ display:grid; place-items:center; flex:none; width:40px; height:40px; border-radius:12px; font-size:15px; }
+.command-results .command-thumb-wrap > i{ color:var(--hd-accent); transition:transform .35s var(--pf-ease-soft); }
+.command-thumb{ transition:transform .55s var(--pf-ease),filter .45s ease; }
+.command-results .command-thumb{ width:40px; height:40px; border-radius:12px; }
+.command-results button:hover .command-thumb,
+.command-results button.active .command-thumb{ transform:scale(1.16); filter:saturate(1.12); }
+.command-thumb-wrap::after{
+  content:''; position:absolute; inset:0; pointer-events:none; border-radius:inherit;
+  background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.4) 50%,transparent 70%);
+  transform:translateX(-140%); opacity:0;
+}
+.command-results button:hover .command-thumb-wrap::after,
+.command-results button.active .command-thumb-wrap::after{ opacity:1; animation:hdShine .8s var(--pf-ease) both; }
+.command-results button:hover .command-thumb-wrap > i,
+.command-results button.active .command-thumb-wrap > i{ animation:hdBob .9s ease-in-out infinite; }
+
+/* ---- empty state & footer ------------------------------------------------ */
+.command-empty{ gap:10px; padding:44px 24px; font-size:11.5px; }
+.command-empty i{ display:inline-block; animation:hdFloat 2.6s ease-in-out infinite; }
+.command-foot kbd{ transition:border-color .25s ease,color .25s ease,background .25s ease; }
+.command-foot kbd:hover{ border-color:var(--hd-accent); color:#fff; }
+.command-count{ margin-right:auto; color:var(--hd-accent); font-weight:700; letter-spacing:.04em; }
+
+/* ---------------------------------------------------------------------------
+   3b. Pictures — consistent Ken-Burns drift on dashboard imagery
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference){
+  .role-shot img,
+  .event-thumb img{
+    animation:hdKenBurns 14s ease-in-out infinite alternate;
+  }
+}
+.role-shot img{ transition:transform .6s var(--pf-ease),filter .45s ease; }
+
+/* ---------------------------------------------------------------------------
+   4. Keyframes
+   --------------------------------------------------------------------------- */
+@keyframes hdSweep{ from{ background-position:220% 0; } to{ background-position:-220% 0; } }
+@keyframes hdToolIn{ from{ opacity:0; transform:translateY(-8px) scale(.96); } to{ opacity:1; transform:none; } }
+@keyframes hdShine{ 0%{ transform:translateX(-220%) rotate(18deg); } 100%{ transform:translateX(320%) rotate(18deg); } }
+@keyframes hdSearchPulse{ 0%,100%{ transform:scale(1); opacity:.92; } 50%{ transform:scale(1.16); opacity:1; } }
+@keyframes hdNudge{ 0%,86%,100%{ box-shadow:none; } 90%{ box-shadow:0 0 0 1px var(--hd-glow),0 12px 34px var(--hd-glow); } }
+@keyframes hdPing{ 0%{ opacity:.85; transform:scale(1); } 100%{ opacity:0; transform:scale(1.28); } }
+@keyframes hdBell{ 0%,100%{ transform:rotate(0); } 20%{ transform:rotate(14deg); } 40%{ transform:rotate(-11deg); } 60%{ transform:rotate(7deg); } 80%{ transform:rotate(-4deg); } }
+@keyframes hdBellSlow{ 0%,88%,100%{ transform:rotate(0); } 90%{ transform:rotate(12deg); } 93%{ transform:rotate(-9deg); } 96%{ transform:rotate(5deg); } }
+@keyframes hdBadge{ 0%,100%{ transform:scale(1); box-shadow:0 0 0 0 var(--hd-accent); } 50%{ transform:scale(1.14); box-shadow:0 0 0 5px transparent; } }
+@keyframes hdBob{ 0%,100%{ transform:translateY(0) scale(1.1); } 50%{ transform:translateY(-2px) scale(1.16); } }
+@keyframes hdFloat{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-6px); } }
+@keyframes hdKenBurns{ from{ transform:scale(1) translateY(0); } to{ transform:scale(1.12) translateY(-4px); } }
+
+/* ---------------------------------------------------------------------------
+   5. Light theme parity
+   --------------------------------------------------------------------------- */
+html[data-theme="light"] .workspace-search:hover{ color:#12283f; }
+html[data-theme="light"] .command-search input{ color:#12283f; }
+html[data-theme="light"] .command-foot kbd:hover{ color:#0f2233; }
+
+/* ---------------------------------------------------------------------------
+   6. Respect reduced motion
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce){
+  .dash-header::after,
+  .header-tools > *,
+  .header-live-dot,
+  .theme-toggle::after,
+  .theme-toggle i,
+  .notif-btn i,
+  .notif-btn::after,
+  .notif-btn b,
+  .workspace-search,
+  .workspace-search::before,
+  .workspace-search::after,
+  .hpm-trigger::after,
+  .hpm-avatar::after,
+  .hpm-item,
+  .command-card::before,
+  .command-search > i,
+  .command-results button::after,
+  .command-thumb-wrap::after,
+  .command-thumb-wrap > i,
+  .command-empty i,
+  .role-shot img,
+  .command-thumb,
+  .event-thumb img{
+    animation:none !important;
+  }
+}

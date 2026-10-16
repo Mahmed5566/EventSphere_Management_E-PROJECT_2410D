@@ -1,0 +1,94 @@
+/* ============================================================================
+   EventSphere · Form & dialog layer  (imported last, additive only)
+   ----------------------------------------------------------------------------
+   Fixes the tall-dialog clipping bug and gives the Create Event form a
+   structured, always-visible action footer. Every rule here is namespaced
+   (`.event-form*`, `.ef-*`, `.eff-*`) or scoped to `.modal-card`, so it does
+   not change unrelated screens.
+   ========================================================================== */
+
+/* --- Dialog scrolling fix -------------------------------------------------
+   vip-pages.css sets `.modal-card{overflow:hidden}`, which clipped any dialog
+   taller than the viewport and made the footer unreachable. Restore a vertical
+   scroll while still clipping the decorative top bar horizontally. */
+.modal-card{
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+}
+.modal-card.wide{width:min(960px,96vw)}
+
+/* --- Create Event form layout -------------------------------------------- */
+.event-form{display:flex;flex-direction:column;gap:0}
+.event-form-body{display:flex;flex-direction:column;gap:14px}
+
+.event-form-section{
+  background:linear-gradient(150deg,rgba(14,32,56,.72),rgba(8,18,33,.72));
+  border:1px solid rgba(90,152,220,.18);
+  border-radius:16px;
+  padding:14px 16px 8px;
+}
+html[data-theme="light"] .event-form-section{
+  background:linear-gradient(150deg,rgba(238,245,255,.9),rgba(226,238,252,.9));
+  border-color:rgba(60,120,190,.22);
+}
+
+.efs-head{display:flex;gap:11px;align-items:flex-start;margin-bottom:8px}
+.efs-index{
+  flex:0 0 auto;width:26px;height:26px;border-radius:9px;display:grid;place-items:center;
+  font-weight:800;font-size:12px;color:#04121f;
+  background:linear-gradient(135deg,#63e0ff,#3a8dff);
+  box-shadow:0 6px 18px rgba(58,141,255,.32);
+}
+.efs-head h3{margin:0;font-size:14px;letter-spacing:.01em}
+.efs-head p{margin:2px 0 0;font-size:11px;line-height:1.5;color:#8fa8c7}
+html[data-theme="light"] .efs-head p{color:#55708d}
+
+.ef-field{display:flex;flex-direction:column;gap:6px;padding:2px 0 8px}
+.ef-field>span{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#9db4d0}
+html[data-theme="light"] .ef-field>span{color:#4a6a8c}
+.ef-field>span b{color:#ff7c93}
+.ef-field input,.ef-field select,.ef-field textarea{width:100%}
+.ef-field textarea{min-height:92px}
+
+/* --- Always-visible action footer ---------------------------------------- */
+.event-form-footer{
+  position:sticky;bottom:0;z-index:6;
+  display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;
+  margin:16px -22px -22px;
+  padding:14px 22px;
+  background:linear-gradient(180deg,rgba(8,20,36,.9),rgba(5,13,26,.99));
+  border-top:1px solid rgba(90,152,220,.24);
+  backdrop-filter:blur(12px);
+  box-shadow:0 -14px 34px rgba(0,0,0,.32);
+}
+html[data-theme="light"] .event-form-footer{
+  background:linear-gradient(180deg,rgba(240,246,255,.94),rgba(230,240,252,.99));
+  border-top-color:rgba(60,120,190,.24);
+  box-shadow:0 -14px 34px rgba(20,50,90,.12);
+}
+.eff-hint{font-size:11px;color:#8fa8c7;display:flex;align-items:center;gap:7px}
+.eff-hint i{color:#4fd6ff}
+html[data-theme="light"] .eff-hint{color:#55708d}
+.eff-actions{display:flex;flex-wrap:wrap;gap:10px;margin-left:auto}
+.event-form-footer .primary,.event-form-footer .ghost{min-height:42px;display:inline-flex;align-items:center;gap:8px;justify-content:center}
+.event-form-footer .primary:disabled,.event-form-footer .ghost:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+.event-form .error{grid-column:auto;display:flex;align-items:center;gap:9px;margin:0}
+
+@media(max-width:640px){
+  .event-form-section{padding:12px 12px 4px;border-radius:14px}
+  .efs-head p{display:none}
+  .event-form-footer{
+    margin:14px -16px -16px;padding:12px 16px;
+    flex-direction:column;align-items:stretch;
+  }
+  .eff-actions{width:100%;margin-left:0}
+  .eff-actions>button{flex:1 1 auto}
+  .eff-hint{order:2;justify-content:center;text-align:center}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .event-form-footer{backdrop-filter:none}
+  .efs-index{box-shadow:none}
+}

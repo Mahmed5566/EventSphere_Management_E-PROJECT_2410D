@@ -1,0 +1,3 @@
+import mongoose from 'mongoose';
+const schema=new mongoose.Schema({name:{type:String,required:true},email:{type:String,default:''},phone:{type:String,default:''},role:{type:String,default:'staff'},event:{type:mongoose.Schema.Types.ObjectId,ref:'Expo'},salary:{type:Number,default:0,min:0},salaryType:{type:String,enum:['monthly','daily','hourly'],default:'monthly'},shiftStart:{type:String,default:''},shiftEnd:{type:String,default:''},active:{type:Boolean,default:true},createdBy:{type:mongoose.Schema.Types.ObjectId,ref:'User',required:true}},{timestamps:true});
+export default mongoose.model('Staff',schema);

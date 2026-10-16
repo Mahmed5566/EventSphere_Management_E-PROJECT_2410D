@@ -1,0 +1,10 @@
+import {Router} from 'express';
+import {protect,authorize} from '../middleware/auth.js';
+import {list,getByExpo,create,update,remove} from '../controllers/ticketSettingController.js';
+const r=Router();
+r.get('/',protect,authorize('admin','organizer'),list);
+r.get('/expo/:expoId',protect,getByExpo);
+r.post('/',protect,authorize('admin','organizer'),create);
+r.put('/:id',protect,authorize('admin','organizer'),update);
+r.delete('/:id',protect,authorize('admin','organizer'),remove);
+export default r;

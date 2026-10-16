@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" fill="none">
+<circle cx="120" cy="120" r="92" stroke="#56cfff" stroke-width="4" opacity=".75"/>
+<circle cx="120" cy="120" r="68" fill="rgba(10,27,51,.9)" stroke="rgba(95,189,255,.45)"/>
+<path d="M120 58l18 40h44l-35 25 13 44-40-24-40 24 13-44-35-25h44z" fill="#4ea3ff" opacity=".95"/>
+<text x="120" y="155" text-anchor="middle" fill="#eef7ff" font-size="16" font-family="Arial" font-weight="700">VIP</text>
+</svg>

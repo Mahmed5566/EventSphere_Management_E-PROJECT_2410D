@@ -1,0 +1,1 @@
+import {Router} from 'express';import {listStaff,createStaff,updateStaff,deleteStaff} from '../controllers/staffController.js';import {protect,authorize} from '../middleware/auth.js';const r=Router();r.use(protect,authorize('admin','organizer'));r.get('/',listStaff);r.post('/',createStaff);r.put('/:id',updateStaff);r.delete('/:id',deleteStaff);export default r;

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 620" fill="none">
+<rect width="900" height="620" fill="#04102a"/>
+<g opacity=".35" stroke="rgba(95,178,255,.2)" stroke-width="1">
+  <path d="M0 80h900M0 160h900M0 240h900M0 320h900M0 400h900M0 480h900M0 560h900"/>
+  <path d="M80 0v620M160 0v620M240 0v620M320 0v620M400 0v620M480 0v620M560 0v620M640 0v620M720 0v620M800 0v620"/>
+</g>
+<g transform="translate(500 120)">
+  <circle r="130" cx="0" cy="0" stroke="#4ea3ff" stroke-width="3" opacity=".9"/>
+  <circle r="92" cx="0" cy="0" stroke="#5de1c2" stroke-width="2" opacity=".7"/>
+  <circle r="158" cx="0" cy="0" stroke="rgba(84,175,255,.18)" stroke-width="1.5" stroke-dasharray="10 12"/>
+  <rect x="-34" y="-34" width="68" height="68" rx="16" fill="#2f80ff" opacity=".92"/>
+  <path d="M-52 0h104M0 -52v104" stroke="#fff" stroke-width="3" opacity=".85"/>
+</g>
+<g transform="translate(180 390)">
+  <path d="M0 120 100 0 200 80 300 20 400 90 500 40 600 110" stroke="#4ea3ff" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <circle cx="100" cy="0" r="8" fill="#5ee7ff"/>
+  <circle cx="300" cy="20" r="8" fill="#2557ff"/>
+  <circle cx="600" cy="110" r="10" fill="#5de1c2"/>
+</g>
+<rect x="86" y="95" width="170" height="102" rx="18" fill="rgba(8,24,46,.82)" stroke="rgba(92,184,255,.35)"/>
+<text x="104" y="128" fill="#9ddfff" font-size="12" font-family="Arial">VIP ATTENDEES</text>
+<text x="104" y="165" fill="#fff" font-size="30" font-family="Arial" font-weight="700">12,480</text>
+</svg>

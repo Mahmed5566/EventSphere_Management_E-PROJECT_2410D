@@ -1,0 +1,132 @@
+/* Planning modules — Reports, Check-in, Activity, Calendar, Budget, Tasks,
+   Copilot. Layered on top of the existing midnight-blue design system; only
+   additive rules live here so nothing in the base theme is overridden. */
+
+/* ---- shared layout helpers ------------------------------------------------ */
+.plan-filters { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; }
+.plan-field, .plan-label { display: flex; flex-direction: column; gap: 6px; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--es-muted); }
+.plan-filters select, .plan-filters input { min-width: 140px; }
+.plan-split { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; }
+.plan-inline { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+.plan-inline input { flex: 1; min-width: 120px; }
+.plan-empty { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 28px; color: var(--es-muted); }
+.plan-empty i { font-size: 1.6rem; color: var(--es-blue); }
+
+.inline-note {
+  display: flex; align-items: center; gap: 10px; margin: 0 0 14px;
+  padding: 12px 16px; border-radius: 14px;
+  background: rgba(78, 163, 255, .08);
+  border: 1px solid var(--es-border);
+  color: var(--es-text); font-size: .86rem;
+}
+.inline-note i { color: var(--es-cyan); }
+
+/* ---- chart track ---------------------------------------------------------- */
+.bar-track { flex: 1; height: 8px; border-radius: 999px; background: rgba(130,170,220,.12); overflow: hidden; }
+.bar-track i { display: block; height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, var(--es-blue), var(--es-cyan)); }
+
+/* ---- check-in ------------------------------------------------------------- */
+.checkin-banner {
+  display: flex; align-items: center; gap: 14px; margin: 0 0 16px;
+  padding: 16px 18px; border-radius: 16px; border: 1px solid var(--es-line);
+  background: var(--es-glass);
+}
+.checkin-banner i { font-size: 1.5rem; }
+.checkin-banner b { display: block; }
+.checkin-banner small { color: var(--es-muted); }
+.checkin-banner.ok { border-color: rgba(82,224,164,.4); }
+.checkin-banner.ok i { color: var(--es-green); }
+.checkin-banner.bad { border-color: rgba(255,120,120,.4); }
+.checkin-banner.bad i { color: #ff8a8a; }
+
+.scan-stage {
+  position: relative; aspect-ratio: 4 / 3; width: 100%; border-radius: 16px;
+  background: radial-gradient(circle at 50% 40%, rgba(78,163,255,.12), rgba(7,17,31,.9));
+  border: 1px solid var(--es-line); display: grid; place-items: center; overflow: hidden;
+  margin-bottom: 12px;
+}
+.scan-stage video { width: 100%; height: 100%; object-fit: cover; }
+.scan-hint { display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--es-muted); }
+.scan-hint i { font-size: 2rem; color: var(--es-blue); }
+.scan-stage.live { border-color: var(--es-cyan); box-shadow: 0 0 0 2px var(--es-glow); }
+
+.qr-modal { display: flex; gap: 18px; align-items: center; }
+.qr-modal img { width: 100%; height: 100%; object-fit: contain; }
+.qr-media { width: 190px; height: 190px; flex: none; border-radius: 12px; background: #fff; padding: 8px; }
+.qr-modal b { display: block; margin-bottom: 6px; }
+.qr-modal small { display: block; color: var(--es-muted); }
+
+/* ---- activity feed & notifications --------------------------------------- */
+.notif-row {
+  display: flex; gap: 12px; align-items: flex-start; width: 100%; text-align: left;
+  padding: 12px; border-radius: 14px; border: 1px solid transparent;
+  background: transparent; cursor: pointer; color: var(--es-text);
+}
+.notif-row:hover { background: rgba(78,163,255,.06); }
+.notif-row.unread { border-color: var(--es-border); background: rgba(78,163,255,.08); }
+.notif-row i { margin-top: 3px; color: var(--es-blue); }
+.notif-row b { display: block; font-size: .9rem; }
+.notif-row small { display: block; color: var(--es-muted); }
+.notif-row em { font-style: normal; font-size: .72rem; color: var(--es-muted); opacity: .8; }
+
+.feed { display: flex; flex-direction: column; gap: 4px; max-height: 460px; overflow-y: auto; }
+.feed-item { display: flex; gap: 12px; padding: 10px 6px; border-bottom: 1px solid var(--es-line); }
+.feed-item b { display: block; font-size: .9rem; font-weight: 600; }
+.feed-item small { color: var(--es-muted); }
+.feed-dot { width: 9px; height: 9px; border-radius: 999px; margin-top: 7px; flex: none;
+  background: var(--es-blue); box-shadow: 0 0 0 4px rgba(78,163,255,.12); }
+.feed-dot.action-created, .feed-dot.action-issued { background: var(--es-green); box-shadow: 0 0 0 4px rgba(82,224,164,.12); }
+.feed-dot.action-deleted { background: #ff8a8a; box-shadow: 0 0 0 4px rgba(255,138,138,.12); }
+.feed-dot.action-approved, .feed-dot.action-completed { background: var(--es-cyan); box-shadow: 0 0 0 4px rgba(85,230,255,.12); }
+
+/* ---- calendar ------------------------------------------------------------- */
+.cal-month { min-width: 150px; text-align: center; font-family: var(--font-display); }
+.cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin-bottom: 18px; }
+.cal-head { text-align: center; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--es-muted); padding: 6px 0; }
+.cal-cell { min-height: 92px; padding: 8px; border-radius: 12px; border: 1px solid var(--es-line);
+  background: rgba(13,27,48,.5); display: flex; flex-direction: column; gap: 5px; }
+.cal-cell.outside { opacity: .4; }
+.cal-cell.today { border-color: var(--es-cyan); box-shadow: 0 0 0 1px var(--es-glow); }
+.cal-day { font-size: .8rem; font-weight: 600; color: var(--es-muted); }
+.cal-chip { font-size: .68rem; padding: 3px 6px; border-radius: 8px; white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis; background: rgba(78,163,255,.14); color: var(--es-text); }
+.cal-chip i { color: var(--es-cyan); margin-right: 4px; }
+.conflict-panel { margin-bottom: 18px; border-color: rgba(255,196,90,.35); }
+.conflict-row { display: flex; gap: 10px; align-items: center; padding: 8px 4px; border-bottom: 1px solid var(--es-line); font-size: .86rem; }
+.conflict-row i { color: #ffc45a; }
+
+/* ---- tasks kanban --------------------------------------------------------- */
+.kanban { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.kanban-col { display: flex; flex-direction: column; gap: 12px; align-content: start; }
+.task-card { border: 1px solid var(--es-line); border-left: 3px solid var(--es-blue);
+  border-radius: 12px; padding: 12px; background: rgba(13,27,48,.6); display: flex; flex-direction: column; gap: 8px; }
+.task-card.priority-high { border-left-color: #ffb454; }
+.task-card.priority-critical { border-left-color: #ff7a7a; }
+.task-card.overdue { box-shadow: 0 0 0 1px rgba(255,122,122,.4); }
+.task-top { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+.task-card small { color: var(--es-muted); }
+.task-meta { display: flex; flex-wrap: wrap; gap: 12px; font-size: .76rem; color: var(--es-muted); }
+.task-meta i { margin-right: 4px; }
+.chip { font-size: .66rem; text-transform: uppercase; letter-spacing: .08em; padding: 3px 8px;
+  border-radius: 999px; background: rgba(141,122,255,.16); color: var(--es-violet); }
+.danger-text { color: #ff8a8a !important; }
+
+/* ---- copilot -------------------------------------------------------------- */
+.copilot-ask { margin-top: 18px; }
+.live-pill { display: inline-flex; align-items: center; gap: 7px; font-size: .72rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--es-muted); }
+.live-pill i { width: 8px; height: 8px; border-radius: 999px; background: var(--es-green); box-shadow: 0 0 0 4px rgba(82,224,164,.15); }
+.live-pill.off i { background: var(--es-muted); box-shadow: none; }
+.copilot-answer { display: flex; gap: 12px; margin-top: 14px; padding: 16px; border-radius: 14px;
+  background: rgba(78,163,255,.08); border: 1px solid var(--es-border); }
+.copilot-answer i { color: var(--es-cyan); font-size: 1.2rem; }
+.copilot-answer p { margin: 0; white-space: pre-wrap; }
+
+@media (max-width: 720px) {
+  .plan-split { grid-template-columns: 1fr; }
+  .cal-grid { gap: 3px; }
+  .cal-cell { min-height: 68px; padding: 5px; }
+  .cal-chip { font-size: .6rem; }
+  .qr-modal { flex-direction: column; text-align: center; }
+}

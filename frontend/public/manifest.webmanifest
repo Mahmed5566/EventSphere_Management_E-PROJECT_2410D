@@ -1,0 +1,17 @@
+{
+  "name": "EventSphere Management",
+  "short_name": "EventSphere",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050816",
+  "theme_color": "#0b7cff",
+  "description": "EventSphere — Event Experience & Operations Platform",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,242 @@
+/* ============================================================
+   EVENTSPHERE — DESIGN SYSTEM
+   A single, additive source of reusable tokens and primitives.
+   Everything here is namespaced (`--ds-*` tokens, `.ds-*` classes)
+   so it can be layered on top of the existing theme without
+   overriding any legacy rule. The midnight-blue palette
+   (electric blue + cyan + violet) is the one visual identity.
+   ------------------------------------------------------------
+   Breakpoints used across the app (kept as documentation; media
+   queries below stay literal because CSS variables cannot be
+   used inside @media conditions):
+     · 1280px — large desktop / wide grids
+     · 1000px — tablet landscape (sidebars collapse)
+     ·  720px — tablet portrait / small layouts
+     ·  560px — phone
+   ============================================================ */
+
+:root {
+  /* ---- Colour roles (aliases of the existing brand tokens) ---- */
+  --ds-bg: #07111f;
+  --ds-surface: rgba(13, 27, 48, .86);
+  --ds-surface-solid: #0d1b30;
+  --ds-line: rgba(130, 170, 220, .15);
+  --ds-text: #f4f8ff;
+  --ds-muted: #8ea3bc;
+  --ds-blue: #4ea3ff;
+  --ds-cyan: #55e6ff;
+  --ds-violet: #8d7aff;
+  --ds-green: #52e0a4;
+  --ds-warn: #ffb454;
+  --ds-danger: #ff8a8a;
+
+  /* ---- Spacing scale (4px base) ---- */
+  --ds-space-1: 4px;
+  --ds-space-2: 8px;
+  --ds-space-3: 12px;
+  --ds-space-4: 16px;
+  --ds-space-5: 20px;
+  --ds-space-6: 24px;
+  --ds-space-8: 32px;
+  --ds-space-10: 40px;
+
+  /* ---- Radii ---- */
+  --ds-radius-sm: 10px;
+  --ds-radius: 14px;
+  --ds-radius-lg: 20px;
+  --ds-radius-pill: 999px;
+
+  /* ---- Elevation ---- */
+  --ds-shadow-sm: 0 8px 24px rgba(0, 0, 0, .18);
+  --ds-shadow: 0 18px 50px rgba(0, 0, 0, .24);
+  --ds-shadow-lg: 0 30px 80px rgba(0, 0, 0, .32);
+  --ds-ring: 0 0 0 1px rgba(92, 190, 255, .17);
+  --ds-glow: 0 0 34px rgba(63, 181, 255, .18);
+
+  /* ---- Icon sizing ---- */
+  --ds-icon-sm: 12px;
+  --ds-icon: 15px;
+  --ds-icon-lg: 20px;
+  --ds-icon-xl: 26px;
+
+  /* ---- Motion ---- */
+  --ds-dur-fast: .18s;
+  --ds-dur: .32s;
+  --ds-dur-slow: .6s;
+  --ds-ease: cubic-bezier(.18, .82, .22, 1);
+  --ds-ease-out: cubic-bezier(.2, .8, .2, 1);
+
+  /* ---- Layering ---- */
+  --ds-z-dropdown: 40;
+  --ds-z-sticky: 60;
+  --ds-z-overlay: 120;
+  --ds-z-toast: 160;
+}
+
+/* ---------------------------------------------------------------
+   Primitives
+   --------------------------------------------------------------- */
+
+/* A generic premium surface. */
+.ds-card {
+  border: 1px solid var(--ds-line);
+  border-radius: var(--ds-radius);
+  background: var(--ds-surface);
+  box-shadow: var(--ds-shadow-sm);
+  padding: var(--ds-space-5);
+}
+
+/* Small status/category chip. */
+.ds-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: var(--ds-radius-pill);
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ds-cyan);
+  background: rgba(85, 230, 255, .12);
+  border: 1px solid rgba(85, 230, 255, .22);
+}
+.ds-badge.muted { color: var(--ds-muted); background: rgba(142, 163, 188, .1); border-color: var(--ds-line); }
+.ds-badge.warn { color: var(--ds-warn); background: rgba(255, 180, 84, .12); border-color: rgba(255, 180, 84, .26); }
+.ds-badge.danger { color: var(--ds-danger); background: rgba(255, 138, 138, .12); border-color: rgba(255, 138, 138, .26); }
+.ds-badge.ok { color: var(--ds-green); background: rgba(82, 224, 164, .12); border-color: rgba(82, 224, 164, .26); }
+
+.ds-muted { color: var(--ds-muted); }
+
+/* Image frame that keeps a consistent ratio and shows a graceful
+   fallback if the source cannot load. */
+.ds-media {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: var(--ds-radius);
+  background: linear-gradient(150deg, #0b1a2d, #0a1424);
+}
+.ds-media > img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.ds-media-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  gap: 6px;
+  color: var(--ds-muted);
+  background:
+    radial-gradient(circle at 30% 25%, rgba(78, 163, 255, .14), transparent 55%),
+    linear-gradient(150deg, #0b1a2d, #0a1424);
+  font-size: var(--ds-icon-xl);
+}
+
+/* ---------------------------------------------------------------
+   Loading skeletons (premium, non-jarring placeholders)
+   --------------------------------------------------------------- */
+.ds-skel {
+  display: block;
+  border-radius: var(--ds-radius-sm);
+  background: linear-gradient(90deg, rgba(10, 28, 51, .88), rgba(18, 44, 80, .92), rgba(10, 28, 51, .88));
+  background-size: 200% 100%;
+  animation: dsShimmer 2s linear infinite;
+}
+.ds-skel-line { height: 12px; margin-bottom: 10px; }
+.ds-skel-line:last-child { margin-bottom: 0; }
+.ds-skel-title { height: 20px; width: 42%; margin-bottom: 16px; }
+.ds-skel-block { height: 96px; border-radius: var(--ds-radius); }
+@keyframes dsShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* ---------------------------------------------------------------
+   Motion utilities
+   --------------------------------------------------------------- */
+.ds-hover-lift { transition: transform var(--ds-dur) var(--ds-ease), box-shadow var(--ds-dur) var(--ds-ease), border-color var(--ds-dur) var(--ds-ease); }
+.ds-hover-lift:hover { transform: translateY(-4px); box-shadow: var(--ds-shadow); border-color: rgba(92, 190, 255, .32); }
+
+.ds-press:active { transform: translateY(0) scale(.985); }
+
+/* Staggered entrance for a list of children. */
+.ds-stagger > * { animation: dsRise var(--ds-dur-slow) var(--ds-ease) both; }
+.ds-stagger > *:nth-child(1) { animation-delay: .04s; }
+.ds-stagger > *:nth-child(2) { animation-delay: .1s; }
+.ds-stagger > *:nth-child(3) { animation-delay: .16s; }
+.ds-stagger > *:nth-child(4) { animation-delay: .22s; }
+.ds-stagger > *:nth-child(5) { animation-delay: .28s; }
+.ds-stagger > *:nth-child(6) { animation-delay: .34s; }
+.ds-stagger > *:nth-child(7) { animation-delay: .4s; }
+.ds-stagger > *:nth-child(8) { animation-delay: .46s; }
+.ds-stagger > *:nth-child(n+9) { animation-delay: .5s; }
+@keyframes dsRise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+/* Charts grow in when their data first arrives. */
+.ds-grow .bar-track > i { animation: dsGrow var(--ds-dur-slow) var(--ds-ease-out) both; transform-origin: left center; }
+@keyframes dsGrow { from { transform: scaleX(.02); opacity: .4; } to { transform: none; opacity: 1; } }
+
+/* Panel-shaped skeleton spacing. */
+.ds-skel-panel { display: flex; flex-direction: column; gap: 2px; }
+
+/* ---------------------------------------------------------------
+   Page title emblem — an optional, consistent marker for module
+   headers. Only applied when a page passes the `icon` prop, so
+   every existing page renders exactly as before.
+   --------------------------------------------------------------- */
+.page-title.has-emblem {
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.page-title.has-emblem > div:first-of-type { flex: 1; min-width: 0; }
+.page-emblem {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  font-size: var(--ds-icon-xl);
+  color: #bde8ff;
+  background: linear-gradient(145deg, rgba(78, 163, 255, .22), rgba(85, 230, 255, .1));
+  border: 1px solid rgba(92, 190, 255, .28);
+  box-shadow: 0 12px 30px rgba(20, 90, 170, .26), inset 0 1px rgba(255, 255, 255, .14);
+}
+@media (max-width: 720px) {
+  .page-emblem { width: 42px; height: 42px; font-size: 18px; border-radius: 13px; }
+}
+
+/* ---------------------------------------------------------------
+   Command palette (Ctrl+K) — additive bits for the grouped
+   results introduced with real, permission-scoped event search.
+   --------------------------------------------------------------- */
+.command-results button .command-hint {
+  margin-left: 8px;
+  font-size: .72rem;
+  font-weight: 500;
+  opacity: .72;
+}
+.command-results button em.command-tag {
+  font-style: normal;
+  font-size: .6rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: var(--ds-radius-pill);
+  border: 1px solid currentColor;
+  opacity: .6;
+  white-space: nowrap;
+}
+.command-results button.active em.command-tag { opacity: 1; }
+
+/* ---------------------------------------------------------------
+   Reduced motion — honour both the OS setting and the in-app
+   "Reduce motion" preference (.reduce-motion on <html>).
+   --------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .ds-skel { animation: none; }
+  .ds-stagger > *, .ds-grow .bar-track > i { animation: none !important; }
+  .ds-hover-lift:hover { transform: none; }
+}
+.reduce-motion .ds-skel { animation: none !important; }
+.reduce-motion .ds-stagger > *,
+.reduce-motion .ds-grow .bar-track > i { animation: none !important; }
+.reduce-motion .ds-hover-lift:hover { transform: none !important; }

@@ -1,0 +1,8 @@
+import Venue from '../models/Venue.js';
+import { recordActivity } from '../utils/activity.js';
+const label = (v) => v?.name || v?.title || String(v?._id || '');
+export const listVenues=async(req,res,next)=>{try{res.json({success:true,venues:await Venue.find().populate('owner','name email').sort({createdAt:-1})})}catch(e){next(e)}};
+export const createVenue=async(req,res,next)=>{try{const v=await Venue.create({...req.body,owner:req.user._id,trialEndsAt:new Date(Date.now()+7*86400000)});await recordActivity({actor:req.user._id,actorName:req.user.name,action:'created',entityType:'Venue',entityId:v._id,summary:`Created venue "${label(v)}"`,meta:{}});res.status(201).json({success:true,venue:v})}catch(e){next(e)}};
+export const updateVenue=async(req,res,next)=>{try{const v=await Venue.findOneAndUpdate({_id:req.params.id,owner:req.user._id},req.body,{new:true,runValidators:true});if(!v)return res.status(404).json({success:false,message:'Venue not found'});await recordActivity({actor:req.user._id,actorName:req.user.name,action:'updated',entityType:'Venue',entityId:v._id,summary:`Updated venue "${label(v)}"`,meta:{fields:Object.keys(req.body||{})}});res.json({success:true,venue:v})}catch(e){next(e)}};
+
+export const deleteVenue=async(req,res,next)=>{try{const v=await Venue.findOneAndDelete({_id:req.params.id,owner:req.user._id});if(!v)return res.status(404).json({success:false,message:'Venue not found'});await recordActivity({actor:req.user._id,actorName:req.user.name,action:'deleted',entityType:'Venue',entityId:req.params.id,summary:`Deleted venue "${label(v)}"`,meta:{}});res.json({success:true})}catch(e){next(e)}};

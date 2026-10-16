@@ -1,0 +1,15 @@
+import { Router } from 'express';
+import { protect, authorize } from '../middleware/auth.js';
+import * as c from '../controllers/enterpriseController.js';
+const r=Router();
+r.get('/search',protect,c.search);
+r.get('/events/:id/detail',protect,c.eventDetail);
+r.get('/reports',protect,authorize('admin','organizer'),c.reports);
+r.put('/registrations/:id/status',protect,authorize('admin','organizer'),c.registrationStatus);
+r.get('/leads',protect,c.leads); r.post('/leads',protect,authorize('admin','organizer','exhibitor'),c.leadCreate); r.put('/leads/:id',protect,authorize('admin','organizer','exhibitor'),c.leadUpdate);
+r.get('/email-templates',protect,authorize('admin','organizer'),c.templates); r.post('/email-templates',protect,authorize('admin','organizer'),c.templateCreate); r.put('/email-templates/:id',protect,authorize('admin','organizer'),c.templateUpdate); r.delete('/email-templates/:id',protect,authorize('admin','organizer'),c.templateDelete);
+r.get('/calendar',protect,c.calendar);
+r.get('/notifications',protect,c.notifications); r.post('/notifications',protect,authorize('admin','organizer'),c.notificationCreate);
+r.post('/payments/checkout',protect,authorize('attendee'),c.createCheckout); r.get('/payments/confirm/:sessionId',protect,c.confirmCheckout);
+r.get('/payments/:orderId',protect,c.paymentStatus); r.post('/payments/:orderId/refund',protect,authorize('admin','organizer'),c.refund);
+export default r;

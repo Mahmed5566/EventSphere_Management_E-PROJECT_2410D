@@ -1,0 +1,89 @@
+/* ============================================================
+   ROLE VIP DASHBOARDS - real photos + animations per role.
+   Additive only: keeps the existing blue/dark theme untouched.
+   ============================================================ */
+
+@keyframes vipPan{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes vipFloatSoft{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes vipScan{0%{transform:translateY(-130%)}100%{transform:translateY(130%)}}
+@keyframes vipRise{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes vipRing{0%{box-shadow:0 0 0 0 rgba(79,201,255,.35)}70%{box-shadow:0 0 0 14px rgba(79,201,255,0)}100%{box-shadow:0 0 0 0 rgba(79,201,255,0)}}
+
+/* Role gallery panel in every dashboard overview */
+.role-gallery{margin-top:18px;position:relative;overflow:hidden}
+.role-gallery::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 85% 0%,rgba(47,205,255,.12),transparent 55%)}
+.role-gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.role-shot{position:relative;margin:0;border-radius:16px;overflow:hidden;border:1px solid rgba(80,170,255,.26);background:#07152c;animation:vipRise .7s var(--vip-ease) both;transition:transform .4s var(--vip-ease),border-color .35s ease,box-shadow .4s ease}
+.role-shot img{display:block;width:100%;height:150px;object-fit:cover;transition:transform .7s var(--vip-ease)}
+.role-shot figcaption{position:absolute;left:0;right:0;bottom:0;padding:10px 12px;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#dff3ff;background:linear-gradient(180deg,transparent,rgba(3,10,24,.9))}
+.role-shot:hover{transform:translateY(-6px);border-color:#4fc9ff;box-shadow:0 24px 60px rgba(20,110,200,.32)}
+.role-shot:hover img{transform:scale(1.09)}
+
+/* Photo strip inside the Experience banner */
+.role-experience-banner .role-banner-shots{position:absolute;right:22px;top:50%;transform:translateY(-50%);display:flex;gap:12px;z-index:3}
+.role-banner-shots img{width:96px;height:120px;object-fit:cover;border-radius:14px;border:1px solid rgba(120,210,255,.35);box-shadow:0 18px 46px rgba(0,0,0,.42);animation:vipFloatSoft 5.5s ease-in-out infinite;transition:transform .45s var(--vip-ease)}
+.role-banner-shots img:hover{transform:translateY(-14px) scale(1.06);z-index:5}
+.role-banner-shots img:nth-child(2){animation-delay:.6s}
+.role-banner-shots img:nth-child(3){animation-delay:1.2s}
+@media(max-width:1180px){.role-banner-shots img{width:74px;height:94px}}
+@media(max-width:860px){.role-banner-shots{display:none}.role-gallery-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.role-gallery-grid{grid-template-columns:1fr}.role-shot img{height:170px}}
+
+/* Per-role command-center hero with a real event photo + animated sheen */
+.app-shell[data-role="organizer"] .dash-hero{background-image:linear-gradient(120deg,rgba(3,12,28,.94),rgba(6,24,52,.72)),url('/images/gallery/event-1.jpg')}
+.app-shell[data-role="exhibitor"] .dash-hero{background-image:linear-gradient(120deg,rgba(3,12,28,.94),rgba(6,24,52,.72)),url('/images/gallery/event-5.jpg')}
+.app-shell[data-role="staff"] .dash-hero{background-image:linear-gradient(120deg,rgba(3,12,28,.94),rgba(6,24,52,.72)),url('/images/gallery/event-6.jpg')}
+.app-shell[data-role="attendee"] .dash-hero{background-image:linear-gradient(120deg,rgba(3,12,28,.94),rgba(6,24,52,.72)),url('/images/gallery/event-2.jpg')}
+.app-shell[data-role="admin"] .dash-hero{background-image:linear-gradient(120deg,rgba(3,12,28,.94),rgba(6,24,52,.72)),url('/images/gallery/event-7.jpg')}
+.dash-hero{position:relative;background-size:cover;background-position:center;animation:vipPan 26s ease-in-out infinite}
+.dash-hero::after{content:'';position:absolute;left:0;right:0;top:0;height:38%;background:linear-gradient(180deg,transparent,rgba(120,220,255,.10),transparent);animation:vipScan 8s linear infinite;pointer-events:none}
+
+/* Per-role sidebar photo wash */
+.sidebar{background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important}
+.app-shell[data-role="organizer"] .sidebar{background-image:linear-gradient(rgba(4,14,31,.86),rgba(4,14,31,.96)),url('/images/gallery/event-7.jpg')!important}
+.app-shell[data-role="exhibitor"] .sidebar{background-image:linear-gradient(rgba(4,14,31,.86),rgba(4,14,31,.96)),url('/images/gallery/event-2.jpg')!important}
+.app-shell[data-role="staff"] .sidebar{background-image:linear-gradient(rgba(4,14,31,.86),rgba(4,14,31,.96)),url('/images/gallery/event-3.jpg')!important}
+.app-shell[data-role="attendee"] .sidebar{background-image:linear-gradient(rgba(4,14,31,.86),rgba(4,14,31,.96)),url('/images/gallery/event-8.jpg')!important}
+.app-shell[data-role="admin"] .sidebar{background-image:linear-gradient(rgba(4,14,31,.86),rgba(4,14,31,.96)),url('/images/gallery/event-1.jpg')!important}
+
+/* Role page heroes get photos too */
+.profile-hero{background-image:linear-gradient(120deg,rgba(4,14,31,.9),rgba(6,22,46,.68)),url('/images/gallery/event-5.jpg')!important;background-size:cover!important;background-position:center!important}
+.companion-map{background-image:linear-gradient(rgba(4,15,33,.8),rgba(4,15,33,.92)),url('/images/gallery/event-2.jpg')!important;background-size:cover!important;background-position:center!important}
+.passport-card{background-image:linear-gradient(135deg,rgba(5,18,40,.9),rgba(5,14,32,.86)),url('/images/gallery/event-8.jpg')!important;background-size:cover!important;background-position:center!important}
+
+/* Experience banner photo per role (banner already has 3 floating photo cards) */
+.app-shell[data-role="organizer"] .role-experience-banner{background-image:linear-gradient(120deg,rgba(4,14,31,.94),rgba(6,22,46,.74)),url('/images/gallery/event-1.jpg')!important;background-size:cover!important;background-position:center!important}
+.app-shell[data-role="exhibitor"] .role-experience-banner{background-image:linear-gradient(120deg,rgba(4,14,31,.94),rgba(6,22,46,.74)),url('/images/gallery/event-5.jpg')!important;background-size:cover!important;background-position:center!important}
+.app-shell[data-role="staff"] .role-experience-banner{background-image:linear-gradient(120deg,rgba(4,14,31,.94),rgba(6,22,46,.74)),url('/images/gallery/event-6.jpg')!important;background-size:cover!important;background-position:center!important}
+.app-shell[data-role="attendee"] .role-experience-banner{background-image:linear-gradient(120deg,rgba(4,14,31,.94),rgba(6,22,46,.74)),url('/images/gallery/event-2.jpg')!important;background-size:cover!important;background-position:center!important}
+.app-shell[data-role="admin"] .role-experience-banner{background-image:linear-gradient(120deg,rgba(4,14,31,.94),rgba(6,22,46,.74)),url('/images/gallery/event-7.jpg')!important;background-size:cover!important;background-position:center!important}
+.qr-panel{position:relative}
+.live-event-banner{position:relative}
+
+/* Highlight-pulse on key live pills so the dashboard feels alive */
+.live-pill i{animation:vipRing 2.6s ease-out infinite}
+
+/* Staggered role gallery entrance */
+.role-shot:nth-child(1){animation-delay:.05s}
+.role-shot:nth-child(2){animation-delay:.13s}
+.role-shot:nth-child(3){animation-delay:.21s}
+.role-shot:nth-child(4){animation-delay:.29s}
+
+/* Animated accent line under the role dashboard hero */
+.dash-hero::before{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,transparent,#4fc9ff,transparent);background-size:200% 100%;animation:vipSlide 4.5s linear infinite;opacity:.75}
+@keyframes vipSlide{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Gentle float on dashboard stat icons */
+.stat i{animation:vipFloatSoft 4.5s ease-in-out infinite}
+.stat:nth-child(2) i{animation-delay:.4s}
+.stat:nth-child(3) i{animation-delay:.8s}
+.stat:nth-child(4) i{animation-delay:1.2s}
+
+/* Light sweep across role hero cards (companion / passport / enterprise) */
+.companion-hero,.passport-card,.enterprise-hero,.role-experience-banner{position:relative;overflow:hidden}
+.companion-hero::after,.enterprise-hero::after,.passport-card::after{content:'';position:absolute;inset:0;background:linear-gradient(120deg,transparent 40%,rgba(255,255,255,.09) 50%,transparent 60%);transform:translateX(-130%);animation:vipSweep 6s ease-in-out infinite;pointer-events:none}
+@keyframes vipSweep{0%,55%{transform:translateX(-130%)}100%{transform:translateX(130%)}}
+
+@media (prefers-reduced-motion: reduce){
+  .role-shot,.role-banner-shots img,.dash-hero,.dash-hero::after,.dash-hero::before,.live-pill i,.stat i,.companion-hero::after,.enterprise-hero::after,.passport-card::after{animation:none !important}
+}

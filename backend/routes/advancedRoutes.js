@@ -1,0 +1,13 @@
+import {Router} from 'express';
+import {protect,authorize} from '../middleware/auth.js';
+import * as c from '../controllers/advancedController.js';
+const r=Router();
+r.get('/speakers',protect,c.speakers); r.post('/speakers',protect,authorize('admin','organizer'),c.speakerCreate); r.put('/speakers/:id',protect,authorize('admin','organizer'),c.speakerUpdate); r.delete('/speakers/:id',protect,authorize('admin','organizer'),c.speakerDelete);
+r.get('/sponsors',protect,c.sponsors); r.post('/sponsors',protect,authorize('admin','organizer'),c.sponsorCreate); r.put('/sponsors/:id',protect,authorize('admin','organizer'),c.sponsorUpdate); r.delete('/sponsors/:id',protect,authorize('admin','organizer'),c.sponsorDelete);
+r.get('/finance',protect,authorize('admin','organizer'),c.finances); r.post('/finance',protect,authorize('admin','organizer'),c.financeCreate); r.delete('/finance/:id',protect,authorize('admin','organizer'),c.financeDelete);
+r.get('/audit',protect,authorize('admin','organizer'),c.audit);
+r.post('/checkin',protect,authorize('admin','organizer','staff'),c.checkin); r.get('/checkin',protect,c.checkinList);
+r.post('/certificates',protect,c.certificateCreate); r.get('/certificates',protect,c.certificates); r.get('/certificates/:id/download',protect,c.certificateDownload);
+r.get('/campaigns',protect,authorize('admin','organizer'),c.campaigns); r.post('/campaigns/send',protect,authorize('admin','organizer'),c.campaignSend);
+r.post('/ai/ask',protect,c.aiAsk);
+export default r;

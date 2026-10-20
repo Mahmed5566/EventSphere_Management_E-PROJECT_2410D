@@ -1,4 +1,7 @@
+import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
 import Expo from "../models/Expo.js";
+import User from "../models/User.js";
 import Booth from "../models/Booth.js";
 import ExpoRegistration from "../models/ExpoRegistration.js";
 import TicketSetting from "../models/TicketSetting.js";
@@ -7,8 +10,40 @@ import ExhibitorApplication from "../models/ExhibitorApplication.js";
 import Notification from "../models/Notification.js";
 import { recordActivity } from "../utils/activity.js";
 
+// Optional authentication: the public site is anonymous, dashboards send a JWT.
+// `protect` cannot be used (it would 401 the public homepage), so the token is
+// read directly when present and ignored when absent/invalid.
+async function optionalUser(req) {
+  const header = req.headers.authorization;
+  if (!header?.startsWith("Bearer ")) return null;
+  try {
+    const decoded = jwt.verify(header.split(" ")[1], process.env.JWT_SECRET);
+    return await User.findById(decoded.id).select("_id role");
+  } catch {
+    return null;
+  }
+}
+
 export const getExpos = async (req, res) => {
-  const expos = await Expo.find().populate("createdBy", "name email").sort({ date: 1 });
+  const viewer = await optionalUser(req);
+  // Anonymous visitors and non-management roles only ever see events that were
+  // actually published. Organizers/admins additionally see the drafts they own.
+  // This stops one organizer's private drafts leaking into another's dashboards.
+  let filter;
+  if (!viewer) {
+    filter = { status: "published" };
+  } else if (viewer.role === "organizer") {
+    filter = { $or: [{ status: "published" }, { createdBy: viewer._id }] };
+  } else if (viewer.role === "admin") {
+    filter = {};
+  } else if (viewer.role === "staff") {
+    filter = { status: { $in: ["published", "completed"] } };
+  } else {
+    // attendee / exhibitor
+    filter = { status: { $in: ["published", "completed"] } };
+  }
+
+  const expos = await Expo.find(filter).populate("createdBy", "name email").sort({ date: 1 });
   res.json({ success: true, count: expos.length, expos });
 };
 

@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import User from "../models/User.js";
+import Staff from "../models/Staff.js";
+import { sendEmail } from "../utils/mailer.js";
 
 const signToken = (id, sessionVersion = 0) =>
   jwt.sign({ id, sessionVersion }, process.env.JWT_SECRET, { expiresIn: "7d" });
@@ -23,6 +25,23 @@ const safeUser = (user) => ({
   customFields: Array.isArray(user.customFields) ? user.customFields : []
 });
 
+// Roles a public self-registration request is allowed to create. `staff` and
+// `admin` are privileged and must be provisioned by an authorized flow, so a
+// self-service signup can never grant them (privilege-escalation guard).
+const PUBLIC_ROLES = ["organizer", "exhibitor", "attendee"];
+
+export function resolveRegistrationRole(role) {
+  const requested = String(role || "").trim().toLowerCase();
+  if (requested === "staff" || requested === "admin") {
+    return {
+      ok: false,
+      role: "attendee",
+      message: "Staff accounts are created by an event organizer. Please register as an attendee or exhibitor, or ask your organizer to add you to their staff."
+    };
+  }
+  return { ok: true, role: PUBLIC_ROLES.includes(requested) ? requested : "attendee" };
+}
+
 export const register = async (req, res) => {
   try {
     const { name, email, password, role, phone, company } = req.body;
@@ -34,8 +53,11 @@ export const register = async (req, res) => {
     }
 
     const normalizedEmail = String(email).trim().toLowerCase();
-    const allowedRoles = ["organizer", "exhibitor", "attendee", "staff"];
-    const selectedRole = allowedRoles.includes(role) ? role : "attendee";
+    const roleDecision = resolveRegistrationRole(role);
+    if (!roleDecision.ok) {
+      return res.status(403).json({ success: false, message: roleDecision.message });
+    }
+    const selectedRole = roleDecision.role;
 
     if (selectedRole === "organizer") {
       const organizerExists = await User.exists({ role: "organizer" });
@@ -275,43 +297,73 @@ export const clearProfile = async (req, res) => {
   }
 };
 
+// Hashes a reset token before storage so a database read can never be replayed
+// as a working password-reset link.
+const hashResetToken = (token) => crypto.createHash("sha256").update(String(token)).digest("hex");
+
 export const forgotPassword = async (req, res) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
-    if (!user) return res.json({ success: true, message: "If the email exists, a reset process can be started." });
+    const email = String(req.body?.email || "").trim().toLowerCase();
+    // Always answer identically: an unauthenticated caller must not be able to
+    // tell whether an email is registered (account enumeration).
+    const generic = { success: true, message: "If that email is registered, a reset link has been sent." };
+    if (!email) return res.json(generic);
+
+    const user = await User.findOne({ email });
+    if (!user) return res.json(generic);
 
     const token = crypto.randomBytes(32).toString("hex");
-    user.resetToken = token;
+    user.resetToken = hashResetToken(token);
     user.resetTokenExpires = Date.now() + 15 * 60 * 1000;
     await user.save({ validateBeforeSave: false });
 
-    res.json({
-      success: true,
-      message: "Password reset token generated. Configure email delivery for production.",
-      resetToken: token
+    // Email is the only delivery channel. When SMTP is not configured the token
+    // is intentionally NOT returned in the HTTP response (that would allow any
+    // anonymous caller to take over any account). Instead it is written to the
+    // server log so the operator can complete a reset manually in development.
+    const resetUrl = `${process.env.CLIENT_URL || "http://localhost:5173"}/?resetToken=${token}`;
+    const delivery = await sendEmail({
+      to: user.email,
+      subject: "EventSphere password reset",
+      html: `<p>Hello ${user.name || "there"},</p><p>Use this link within 15 minutes to set a new password:</p><p><a href="${resetUrl}">${resetUrl}</a></p><p>If you did not request this, you can ignore this email.</p>`
     });
+
+    if (!delivery) {
+      console.warn("[auth] SMTP not configured — password reset token generated for", email, "(not transmitted to the client).");
+    }
+
+    return res.json(generic);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Forgot password failed:", error);
+    return res.status(500).json({ success: false, message: "Could not start the reset process." });
   }
 };
 
 export const resetPassword = async (req, res) => {
   try {
+    const password = String(req.body?.password || "");
+    if (password.length < 6) {
+      return res.status(400).json({ success: false, message: "Password must contain at least 6 characters." });
+    }
+
     const user = await User.findOne({
-      resetToken: req.params.token,
+      resetToken: hashResetToken(req.params.token),
       resetTokenExpires: { $gt: Date.now() }
     }).select("+password");
 
     if (!user) return res.status(400).json({ success: false, message: "Invalid or expired reset token." });
 
-    user.password = req.body.password;
+    user.password = password;
     user.resetToken = undefined;
     user.resetTokenExpires = undefined;
+    // Invalidate existing sessions after a password reset.
+    user.sessionVersion = (user.sessionVersion || 0) + 1;
     await user.save();
 
     res.json({ success: true, message: "Password updated successfully." });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Reset password failed:", error);
+    res.status(500).json({ success: false, message: "Could not reset the password." });
   }
 };
 

@@ -26,6 +26,7 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 import exhibitorApplicationRoutes from "./routes/exhibitorApplicationRoutes.js";
 import advancedRoutes from "./routes/advancedRoutes.js";
 import enterpriseRoutes from "./routes/enterpriseRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 import experienceRoutes from "./routes/experienceRoutes.js";
 import checkinRoutes from "./routes/checkinRoutes.js";
 import activityRoutes from "./routes/activityRoutes.js";
@@ -33,6 +34,9 @@ import calendarRoutes from "./routes/calendarRoutes.js";
 import copilotRoutes from "./routes/copilotRoutes.js";
 import budgetRoutes from "./routes/budgetRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
+import contactRoutes from "./routes/contactRoutes.js";
+import seoRoutes from "./routes/seoRoutes.js";
+import { securityHeaders } from "./middleware/security.js";
 
 
 dotenv.config();
@@ -44,7 +48,12 @@ const io = new Server(httpServer, {
 });
 app.set("io", io);
 
+app.use(securityHeaders);
 app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:5173", credentials: true }));
+// Payment routes are mounted BEFORE express.json(): the Stripe webhook needs the
+// untouched raw request body to verify its HMAC signature. Express consumes the
+// stream once, so the JSON parser must not run first on this path.
+app.use("/api/payments", paymentRoutes);
 app.use(express.json({ limit: "6mb" }));
 app.use(cookieParser());
 
@@ -81,6 +90,10 @@ app.use("/api/calendar", calendarRoutes);
 app.use("/api/copilot", copilotRoutes);
 app.use("/api/budget", budgetRoutes);
 app.use("/api/tasks", taskRoutes);
+app.use("/api/contact", contactRoutes);
+
+// Site-root SEO surface: /sitemap.xml and /robots.txt (public, no auth).
+app.use(seoRoutes);
 
 // --- Socket.IO: authenticated rooms -----------------------------------------
 // A client may only join the private room of the identity proven by its JWT.

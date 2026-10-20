@@ -10,6 +10,6 @@ r.get('/leads',protect,c.leads); r.post('/leads',protect,authorize('admin','orga
 r.get('/email-templates',protect,authorize('admin','organizer'),c.templates); r.post('/email-templates',protect,authorize('admin','organizer'),c.templateCreate); r.put('/email-templates/:id',protect,authorize('admin','organizer'),c.templateUpdate); r.delete('/email-templates/:id',protect,authorize('admin','organizer'),c.templateDelete);
 r.get('/calendar',protect,c.calendar);
 r.get('/notifications',protect,c.notifications); r.post('/notifications',protect,authorize('admin','organizer'),c.notificationCreate);
-r.post('/payments/checkout',protect,authorize('attendee'),c.createCheckout); r.get('/payments/confirm/:sessionId',protect,c.confirmCheckout);
-r.get('/payments/:orderId',protect,c.paymentStatus); r.post('/payments/:orderId/refund',protect,authorize('admin','organizer'),c.refund);
+// Payment endpoints live in their own hardened router (/api/payments) so the
+// Stripe webhook can receive a raw body. See routes/paymentRoutes.js.
 export default r;
